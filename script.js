@@ -1,10 +1,13 @@
-const webcam = document.querySelector('#video')
+const webcam = document.querySelector('#video');
+var frame = 0;
+var emotion = "";
+var recording = 0;
 
 Promise.all([
-  faceapi.nets.tinyFaceDetector.loadFromUri('./models'), // Detecção facial
-  faceapi.nets.faceLandmark68Net.loadFromUri('./models'), // Pontos de referência na face
-  faceapi.nets.faceRecognitionNet.loadFromUri('./models'), // Localização da face no vídeo
-  faceapi.nets.faceExpressionNet.loadFromUri('./models') // Emoção
+  faceapi.nets.tinyFaceDetector.loadFromUri('./models'), // detecção facial
+  faceapi.nets.faceLandmark68Net.loadFromUri('./models'), // pontos de referência na face
+  faceapi.nets.faceRecognitionNet.loadFromUri('./models'), // localização da face no vídeo
+  faceapi.nets.faceExpressionNet.loadFromUri('./models') // emoção
 ]).then(startVideo)
 
 async function startVideo() {
@@ -20,31 +23,73 @@ async function startVideo() {
   }
 }
 
-webcam.addEventListener('play', () => {
+webcam.addEventListener('play', () => {  
   const canvas = faceapi.createCanvasFromMedia(video)
   document.body.append(canvas)
   const displaySize = { width: webcam.width, height: webcam.height }
   faceapi.matchDimensions(canvas, displaySize)
-  // Intervalo de detecção de face a cada 100ms
+  // intervalo de detecção de face a cada 100ms
   setInterval(async () => {
     const detections = await faceapi.detectAllFaces(
       webcam,
-      // Biblioteca para detectar face
+      // biblioteca para detectar face
       new faceapi.TinyFaceDetectorOptions()
     )
-    // Desenha marcação na face
+    // desenha marcação na face
     .withFaceLandmarks()
-    // Determina expressões
+    // determina expressões
     .withFaceExpressions()
-    // Redimensiona as detecções
+    // redimensiona as detecções
     const resizedDetections = faceapi.resizeResults(detections, displaySize)
-    // Apaga canvas antes de desenhar outro
+    // apaga canvas antes de desenhar outro
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height)
-    // Desenha detecções
+    // desenha detecções
     faceapi.draw.drawDetections(canvas, resizedDetections)
-    // Desenha pontos de referência
+    // desenha pontos de referência
     //faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-    // Desenha expressões
+    // desenha expressões
     faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-  }, 100);
+        
+    if(detections.length > 0) {      
+      detections.forEach(element => {
+        let status = "";
+        let valueStatus = 0.0;
+        for (const [key, value] of Object.entries(element.expressions)) {          
+          if (value > valueStatus) {
+            status = key;
+            valueStatus = value;
+          }          
+        }
+        if (recording == 1) {
+          frame = frame + 1;
+          hora = time();
+          emotion = emotion + frame + "," + hora + "," + status + ";";
+        }        
+        //console.log(status);
+        //console.log(emotion);        
+      });
+    }    
+    
+  }, 100);  
 })
+
+function time() {
+  today = new Date();
+  h = today.getHours();
+  m = today.getMinutes();
+  s = today.getSeconds();
+  hora = h + ":" + m + ":" + s;
+  return hora;
+}
+
+function gravar() {
+  recording = 1;
+  return recording;
+}
+
+function download() {
+  let text = emotion;
+  let title = "myemotions";
+  let blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  saveAs(blob, title + ".csv");
+}

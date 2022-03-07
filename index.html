@@ -6,24 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <link rel="shortcut icon" href="#">
   <title>Emotion Camera</title>
-  <style>
-    body {
-        width: 100vw;
-        height: 100vh;        
-        margin: 0;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    canvas {
-        position: absolute;
-    }
-</style>
-  <script defer src="./face-api.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./FileSaver.min.js"></script>
+  <script defer src="./face-api.min.js"></script>  
   <script defer src="./script.js"></script>
 </head>
 <body>
-  <video id="video" width="720" height="560" muted></video>  
+  <div class="title">
+    <h1>Emotion Camera</h1>
+  </div>
+  <div class="main">
+    <video id="video" width="720" height="560" muted></video>
+  </div>
+  <div class="recording">
+    <button onclick="gravar()">Gravar</button>
+    <button onclick="download()">Download</button>
+  </div>
 </body>
 </html>
