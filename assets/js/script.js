@@ -1,4 +1,5 @@
 const webcam = document.querySelector('#video');
+var cronometro = document.getElementById('cronometro');
 var frame = 0;
 var emotion = "";
 var recording = 0;
@@ -7,7 +8,7 @@ Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri('./models'), // detecção facial
   faceapi.nets.faceLandmark68Net.loadFromUri('./models'), // pontos de referência na face
   faceapi.nets.faceRecognitionNet.loadFromUri('./models'), // localização da face no vídeo
-  faceapi.nets.faceExpressionNet.loadFromUri('./models') // emoção
+  faceapi.nets.faceExpressionNet.loadFromUri('./models') // emoção  
 ]).then(startVideo)
 
 async function startVideo() {
@@ -21,6 +22,10 @@ async function startVideo() {
   } catch (err) {
     console.error(err);
   }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('cronometro').style.display = 'block';
+  document.getElementById('recording').style.display = 'block';
+  document.getElementById('download-disabled').style.display = 'block';
 }
 
 webcam.addEventListener('play', () => {  
@@ -63,10 +68,8 @@ webcam.addEventListener('play', () => {
         if (recording == 1) {
           frame = frame + 1;
           hora = time();
-          emotion = emotion + frame + "," + hora + "," + status + ";";
+          emotion = emotion + frame + "," + hora + "," + status + ";";          
         }        
-        //console.log(status);
-        //console.log(emotion);        
       });
     }    
     
@@ -82,8 +85,62 @@ function time() {
   return hora;
 }
 
+let hour = 0;
+let minute = 0;
+let second = 0;
+let millisecond = 0;
+let cron;
+
+function startCron() {
+  cron = setInterval(() => { timer(); }, 7);
+}
+
+function stopCron() {
+  clearInterval(cron);
+  hour = 0;
+  minute = 0;
+  second = 0;
+  millisecond = 0;
+  cronometro.innerText = "00:00:00:00";
+}
+
+function timer() {
+  if ((millisecond += 1) == 100) {
+    millisecond = 0;
+    second++;
+  }
+  if (second == 60) {
+    second = 0;
+    minute++;
+  }
+  if (minute == 60) {
+    minute = 0;
+    hour++;
+  }
+  cronometro.innerText = returnData(hour) + ":" + returnData(minute) + ":" + returnData(second) + ":" + returnData(millisecond);
+}
+
+function returnData(input) {
+  return input >= 10 ? input : `0${input}`;
+}
+
 function gravar() {
-  recording = 1;
+  if (recording == 0) {
+    frame = 0;
+    emotion = "";
+    recording = 1;
+    document.getElementById('download-able').style.display = 'none';
+    document.getElementById('download-disabled').style.display = 'block';
+    document.getElementById('recording-button').src = './assets/images/recording-on.png';
+    startCron();
+  }  
+  else if (recording == 1) {
+    recording = 0;
+    stopCron();
+    document.getElementById('recording-button').src = './assets/images/recording-off.png';
+    document.getElementById('download-disabled').style.display = 'none';
+    document.getElementById('download-able').style.display = 'block';
+  }  
   return recording;
 }
 

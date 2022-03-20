@@ -7,10 +7,10 @@
   <link rel="shortcut icon" href="#">
   <title>Emotion Camera</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./assets/css/style.css">
   <script src="./FileSaver.min.js"></script>
   <script defer src="./face-api.min.js"></script>  
-  <script defer src="./script.js"></script>
+  <script defer src="./assets/js/script.js"></script>
 </head>
 <body>
   <div class="title">
@@ -20,8 +20,11 @@
     <video id="video" width="720" height="560" muted></video>
   </div>
   <div class="recording">
-    <button onclick="gravar()">Gravar</button>
-    <button onclick="download()">Download</button>
+    <p id="loading">Carregando modelos...</p>
+    <button type="button" id="recording" onclick="gravar()"><img src="./assets/images/recording-off.png" alt="" width="40" height="40" id="recording-button"></button>
+    <p id="cronometro">00:00:00:00</p>
+    <button id="download-disabled">Download</button>
+    <button id="download-able" onclick="download()">Download</button>
   </div>
 </body>
 </html>
