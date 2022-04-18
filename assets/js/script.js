@@ -3,6 +3,7 @@ var cronometro = document.getElementById('cronometro');
 var frame = 0;
 var emotion = "";
 var recording = 0;
+var startDate = new Date();
 
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri('./models'), // detecção facial
@@ -68,7 +69,7 @@ webcam.addEventListener('play', () => {
         if (recording == 1) {
           frame = frame + 1;
           hora = time();
-          emotion = emotion + frame + "," + hora + "," + status + ";";          
+          emotion = emotion + frame + "," + hora + "," + status + "\n";          
         }        
       });
     }    
@@ -97,11 +98,22 @@ function startCron() {
 
 function stopCron() {
   clearInterval(cron);
+  //clearTimeout(cron);
   hour = 0;
   minute = 0;
   second = 0;
   millisecond = 0;
   cronometro.innerText = "00:00:00:00";
+}
+
+function timerStart() {
+  let now = new Date();
+  let elapsed = now - startDate;
+  let parts = [];
+  //parts[0] = '' + Math.floor(elapsed / one_hour);
+  //parts[1] = '' + Math.floor((elapsed % one_hour) / one_minute);
+  //parts[2] = '' + Math.floor(((elapsed % one_hour) % one_minute) / one_second);
+  cronometro.innerText = startDate;
 }
 
 function timer() {
@@ -132,6 +144,7 @@ function gravar() {
     document.getElementById('download-able').style.display = 'none';
     document.getElementById('download-disabled').style.display = 'block';
     document.getElementById('recording-button').src = './assets/images/recording-on.png';
+    //timerStart();
     startCron();
   }  
   else if (recording == 1) {
@@ -145,8 +158,13 @@ function gravar() {
 }
 
 function download() {
-  let text = emotion;
+  let text1 = "frame,time,emotion\n";
+  let text = text1 + emotion;
   let title = "myemotions";
   let blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   saveAs(blob, title + ".csv");
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
 }

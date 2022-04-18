@@ -12,7 +12,7 @@
   <script defer src="./face-api.min.js"></script>  
   <script defer src="./assets/js/script.js"></script>
 </head>
-<body>
+<body>  
   <div class="title">
     <h1>Emotion Camera</h1>
   </div>
@@ -24,7 +24,20 @@
     <button type="button" id="recording" onclick="gravar()"><img src="./assets/images/recording-off.png" alt="" width="40" height="40" id="recording-button"></button>
     <p id="cronometro">00:00:00:00</p>
     <button id="download-disabled">Download</button>
-    <button id="download-able" onclick="download()">Download</button>
+    <button id="download-able" onclick="download()">Download</button>    
+  </div>
+  <div id="modal">
+    <div class="modal-content">   
+      <p><span>Recomendações e informações importantes:</span></p>
+      <p>1. Esta ferramenta deve ser utilizada somente em atividades de ensino e aprendizagem quando solicitada pelo professor(a).</p>
+      <p>2. Para melhor eficiência na captura e reconhecimento facial, mantenha o rosto posicionado de frente para a webcam.</p>
+      <p>3. Posicione-se a uma distância inferior a 1 metro para que todos os detalhes da sua face sejam identificados.</p>
+      <p>4. Mantenha o local iluminado.</p>
+      <p>5. Resolução mínina recomendada: 1600 x 900.</p>
+      <p>6. Esta ferramenta não armazena imagens, apenas reconhece as emoções do indivíduo durante o seu uso e registra em um arquivo para download.</p>
+      <p>7. O arquivo de download é gerado a partir da última gravação realizada.</p>
+      <button id="modal" onclick="closeModal()">Entendi</button>
+    </div>
   </div>
 </body>
 </html>
